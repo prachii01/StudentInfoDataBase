@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.querySelector('form');
+            loginForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                const username = loginForm.querySelector('input[name="username"]').value;
+                const password = loginForm.querySelector('input[name="password"]').value;
+                try {
+                    const response = await axios.post('http://localhost:3000/login', {
+                        username,
+                        password,
+                    });
+                    if (response.status === 200) {
+                        alert(response.data.msg);
+                        window.open("students.html");
+                    } else {
+                        alert(response.data);
+                    }
+                } catch (error) {
+                    console.error('Error during login:', error);
+                    alert('An error occurred during login. Please try again.');
+                }
+            });
+        });
+    </script>
+    <style>
+        fieldset{
+            margin: auto;
+            width: 350px;
+        }
+        input{
+            height: 30px;
+            margin-top: 20px;
+            width: 300px;
+            margin-left: 20px;
+        }
+        button{
+            width: 100px;
+            margin-left: 125px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <fieldset>
+        <h1 style="text-align: center;">Login</h1>
+        <form method="POST" action="/login">
+            <input name="username" placeholder="username"><br>
+            <input name="password" placeholder="password"><br>
+            <button style="margin-top: 20px;" type="submit">Login</button>
+            <p style="text-align: center;">----or----</p>
+        </form>
+            <a href="signUp.html"><button>Sign up</button></a>
+    </fieldset>
+</body>
+</html>

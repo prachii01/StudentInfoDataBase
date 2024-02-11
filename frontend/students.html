@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data Table</title>
+    <style>
+        table {
+            margin: auto;
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            border: 1px solid black;
+            padding: 10px;
+            width: 150px;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        button {
+            width: 80px;
+            height: 30px;
+            background-color: white;
+            margin-right: 5px;
+        }
+        fieldset{
+            margin: auto;
+            width: 200px;
+        }
+        input{
+            height: 30px;
+            margin-top: 20px;
+            width: 300px;
+            margin-left: 20px;
+        }
+        button{
+            width: 100px;
+            margin-left: 125px;
+            height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Student Data</h1>
+    <table id="studentTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Rollno</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="studentDataBody">
+        </tbody>
+    </table><br>
+    <fieldset>
+    <form id="addStudentForm">
+        <input type="text" id="name" name="name" placeholder="name" required><br>
+        
+        <input type="text" id="rollno" name="rollno" placeholder="rollno" required><br>
+
+        <button type="submit">Add Student</button>
+    </form>
+    </fieldset>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        try {
+            const response = await axios.get('http://localhost:3000/students');
+            const students = response.data.students;
+
+
+            const studentTable = document.getElementById('studentTable');
+            const studentDataBody = document.getElementById('studentDataBody');
+
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                const rollnoCell = document.createElement('td');
+                const actionsCell = document.createElement('td');
+                const editButton = document.createElement('button');
+                const deleteButton = document.createElement('button');
+
+                nameCell.textContent = student.name;
+                rollnoCell.textContent = student.rollno;
+
+                editButton.textContent = 'Edit';
+                editButton.addEventListener('click', async () => {
+                    const newName = prompt('Enter new name:');
+                    const newRollNo = prompt('Enter new roll number:');
+                    if (newName && newRollNo) {
+                        try {
+                            await axios.put(`http://localhost:3000/students/${student._id}`, { name: newName, rollno: newRollNo });
+                            alert('Student updated successfully!');
+                            location.reload();
+                        } catch (error) {
+                            console.error('Error updating student:', error);
+                            alert('An error occurred while updating student.');
+                        }
+                    }
+                });
+
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', async () => {
+                    try {
+                        await axios.delete(`http://localhost:3000/students/${student._id}`);
+                        alert('Student deleted successfully!');
+                        location.reload();
+                    } catch (error) {
+                        console.error('Error deleting student:', error);
+                        alert('An error occurred while deleting student.');
+                    }
+                });
+
+                actionsCell.appendChild(editButton);
+                actionsCell.appendChild(deleteButton);
+
+                row.appendChild(nameCell);
+                row.appendChild(rollnoCell);
+                row.appendChild(actionsCell);
+
+                studentDataBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching student data:', error);
+            alert('An error occurred while fetching student data.');
+        }
+        const addStudentForm = document.getElementById('addStudentForm');
+
+            addStudentForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const nameInput = document.getElementById('name');
+                const rollnoInput = document.getElementById('rollno');
+
+                const newName = nameInput.value;
+                const newRollNo = rollnoInput.value;
+
+                if (newName && newRollNo) {
+                    try {
+                        await axios.post('http://localhost:3000/students', { name: newName, rollno: newRollNo });
+                        alert('Student added successfully!');
+                        location.reload();
+                    } catch (error) {
+                        console.error('Error adding student:', error);
+                        alert('An error occurred while adding student.');
+                    }
+                }
+            });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const signUpForm = document.querySelector('form');
+
+            signUpForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const username = signUpForm.querySelector('input[name="username"]').value;
+                const password = signUpForm.querySelector('input[name="password"]').value;
+
+                try {
+                    const response = await axios.post('http://localhost:3000/register', {
+                        username,
+                        password,
+                    });
+
+                    if (response.status === 200) {
+                        alert(response.data);
+                        window.open("login.html");
+                    } else {
+                        alert(response.data);
+                    }
+                } catch (error) {
+                    console.error('Error during registration:', error);
+                    alert('An error occurred during registration. Please try again.');
+                }
+            });
+        });
+    </script>
+    <style>
+        fieldset{
+            margin: auto;
+            width: 350px;
+        }
+        input{
+            height: 30px;
+            margin-top: 20px;
+            width: 300px;
+            margin-left: 20px;
+        }
+        button{
+            width: 100px;
+            margin-left: 125px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <fieldset>
+        <h1 style="text-align: center;">Sign Up</h1>
+        <form method="POST" action="/register">
+            <input name="username" placeholder="username"><br>
+            <input name="password" placeholder="password"><br>
+            <button style="margin-top: 20px;" type="submit">Sign Up</button>
+        </form>
+    </fieldset>
+</body>
+</html>
